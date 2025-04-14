@@ -2,21 +2,20 @@ const express = require("express");
 
 const app = express();
 
+const {adminAuth} = require("./middlewares/auth");
+
+app.use("/admin",adminAuth);
+
 app.get("/user",(req,res)=>{
-    res.send({firstName: "Aravind", lastName: "Ashok"});
+    res.send("User Data Sent");
 });
 
-app.post("/user",(req,res)=>{
-    res.send("Data saved successfully to the database");
+app.get("/admin/getAllData", (req,res)=>{
+    res.send("All Data Sent");
 });
 
-app.delete("/user",(req,res)=> {
-    res.send("Deleted successfully");
-})
-
-//match all the HTTP method API calls to /test
-app.use("/test",(req, res) => {
-    res.send("Hello from the server");
+app.get("/admin/deleteUser", (req,res)=>{
+    res.send("Deleted a User");
 });
 
 app.listen(3000, () => {
