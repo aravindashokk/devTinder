@@ -59,5 +59,11 @@ userSchema.methods.validatePassword = async function(passwordInputByUser) {
     return isPasswordValid;
 }
 
+userSchema.methods.setNewPassword = async function(newPassword) {
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    return passwordHash;
+}
+
+
 
 module.exports = mongoose.model("User", userSchema);
