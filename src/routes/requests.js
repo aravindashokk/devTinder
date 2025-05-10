@@ -16,7 +16,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
             return res.status(400).json({
                 message: "Invalid status type: " + status,
             });
-        } 
+        }
 
         const toUser = await User.findById(toUserId);
         if (!toUser) {
@@ -33,9 +33,9 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
             ],
         });
 
-        
 
-        if(existingConnectionRequest) {
+
+        if (existingConnectionRequest) {
             return res.status(400).json({
                 message: "Connection request already exists",
             });
@@ -49,7 +49,41 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
 
         const data = await connectionRequests.save();
         res.json({
-            message: req.user.firstName+" "+status+" "+toUser.firstName,
+            message: req.user.firstName + " " + status + " " + toUser.firstName,
+            data: data,
+        });
+    } catch (err) {
+        res.status(400).send("Something went wrong: " + err.message);
+    }
+});
+
+requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
+    try {
+        const loggedInUser = req.user;
+        const {status,requestId} = req.params;
+        const allowedStatuses = ["accepted", "rejected"];
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({
+                message: "Invalid status type: " + status,
+            });
+        }
+
+         const connectionRequestData = await connectionRequest.findOne({
+            _id: requestId,
+            toUserId: loggedInUser._id, 
+            status: "interested",
+        });
+
+        if (!connectionRequestData) {
+            return res.status(404).json({
+                message: "Connection request not found",
+            });
+        }
+
+        connectionRequestData.status = status;
+        const data = await connectionRequestData.save();
+        res.json({
+            message: loggedInUser.firstName + " " + status + " the request",
             data: data,
         });
     } catch (err) {
