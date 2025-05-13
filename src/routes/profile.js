@@ -45,7 +45,7 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
         const loggedInUser = req.user;
         const { oldPassword, newPassword } = req.body;
         const isPasswordValid = await loggedInUser.validatePassword(oldPassword);
-        const isNewPasswordSame = await await loggedInUser.validatePassword(newPassword);
+        const isNewPasswordSame = await loggedInUser.validatePassword(newPassword);
 
         if (!isPasswordValid) {
             throw new Error("Invalid credentials!");
