@@ -1,4 +1,4 @@
-const url = "mongodb+srv://aravindkayal1:grimmjow@myfreecluster.qd3wkh8.mongodb.net/devTinder ";
+const url = "mongodb+srv://aravindkayal1:4KtdAtHB9jZCCHAw@myfreecluster.qd3wkh8.mongodb.net/devTinder ";
 
 const mongoose = require('mongoose');
 
