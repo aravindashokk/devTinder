@@ -3,6 +3,8 @@ const { userAuth } = require("../middlewares/auth");
 const connectionRequest = require('../models/connectionRequest');
 const User = require('../models/user');
 
+const sendEmail = require('../utils/sendEmail');
+
 const requestRouter = express.Router();
 
 requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res) => {
@@ -48,6 +50,9 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
         });
 
         const data = await connectionRequests.save();
+
+        const emailRes = await sendEmail.run("You got a new friend request from  " + req.user.firstName, req.user.firstName + " is " + status + " in " + toUser.firstName + " from MatchTinder. Please login to your account to see the request.");
+
         res.json({
             message: req.user.firstName + " " + status + " " + toUser.firstName,
             data: data,
@@ -60,7 +65,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
 requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user;
-        const {status,requestId} = req.params;
+        const { status, requestId } = req.params;
         const allowedStatuses = ["accepted", "rejected"];
         if (!allowedStatuses.includes(status)) {
             return res.status(400).json({
@@ -68,9 +73,9 @@ requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, r
             });
         }
 
-         const connectionRequestData = await connectionRequest.findOne({
+        const connectionRequestData = await connectionRequest.findOne({
             _id: requestId,
-            toUserId: loggedInUser._id, 
+            toUserId: loggedInUser._id,
             status: "interested",
         });
 
